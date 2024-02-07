@@ -1,13 +1,19 @@
-const pokeCard = document.querySelector('[data-poke-card]');
-const pokeName = document.querySelector('[data-poke-name]');
-const pokeImg = document.querySelector('[data-poke-img]');
+
 const pokeImgContainer = document.querySelector('[data-poke-img-container]');
+const pokeImg = document.querySelector('[data-poke-img]');
 const pokeId = document.querySelector('[data-poke-id]');
-const pokeTypes = document.querySelector('[data-poke-types]');
-const pokeStats = document.querySelector('[data-poke-stats]');
+const pokehp = document.getElementById('hp');
+const pokeattack = document.getElementById('attack');
+const pokedefense = document.getElementById('defense');
+const pokesp_atk = document.getElementById('sp_atk');
+const pokesp_def = document.getElementById('sp_def');
+const pokeSpeed = document.getElementById('speed');
+const pokeelemento = document.getElementById('elemento');
+const pokenombrepok = document.getElementById('nombrepok');
 
 const typeColors = {
     electric: '#FFEA70',
+    dark:'#3C4152',
     normal: '#B09398',
     fire: '#FF675C',
     water: '#0596C7',
@@ -27,24 +33,28 @@ const typeColors = {
 };
 
 
-const searchPokemon = event => {
-    event.preventDefault();
-    const { value } = event.target.pokemon;
-    fetch(`https://pokeapi.co/api/v2/pokemon/${value.toLowerCase()}`)
-        .then(data => data.json())
-        .then(response => renderPokemonData(response))
-        .catch(err => renderNotFound())
+
+const searchPokemon = () => {
+const inputValue = document.getElementById('pokemon').value.toLowerCase();
+fetch(`https://pokeapi.co/api/v2/pokemon/${inputValue}`)
+    .then(data => data.json())
+    .then(response => renderPokemonData(response))
+    .catch(err =>
+    console.log(err));
 }
 
 const renderPokemonData = data => {
     const sprite =  data.sprites.front_default;
+    console.log(data)
     const { stats, types } = data;
 
-    pokeName.textContent = data.name;
+    pokenombrepok.textContent = data.name;
+    pokehp.textContent = data.hp;
     pokeImg.setAttribute('src', sprite);
-    pokeId.textContent = `Nº ${data.id}`;
+    console.log(sprite)
+    // pokeId.textContent = `Nº ${data.id}`;
     setCardColor(types);
-    renderPokemonTypes(types);
+    // renderPokemonTypes(types);
     renderPokemonStats(stats);
 }
 
@@ -59,32 +69,47 @@ const setCardColor = types => {
 const renderPokemonTypes = types => {
     pokeTypes.innerHTML = '';
     types.forEach(type => {
-        const typeTextElement = document.createElement("div");
-        typeTextElement.style.color = typeColors[type.type.name];
+        const typeTextElement = document.createElement("span");
+        typeTextElement.classList.add('badge');
+        console.log(type.type.name)
+        
+        
+        
+        typeTextElement.style.backgroundColor = typeColors[type.type.name];
         typeTextElement.textContent = type.type.name;
         pokeTypes.appendChild(typeTextElement);
     });
 }
 
 const renderPokemonStats = stats => {
-    pokeStats.innerHTML = '';
+    // pokeStats.innerHTML = '';
+    console.log(stats)
     stats.forEach(stat => {
-        const statElement = document.createElement("div");
-        const statElementName = document.createElement("div");
-        const statElementAmount = document.createElement("div");
-        statElementName.textContent = stat.stat.name;
-        statElementAmount.textContent = stat.base_stat;
-        statElement.appendChild(statElementName);
-        statElement.appendChild(statElementAmount);
-        pokeStats.appendChild(statElement);
+        if(stat.stat.name=="hp"){
+            pokehp.textContent = stat.base_stat;
+        }else if(stat.stat.name=="attack"){
+                pokeattack.textContent = stat.base_stat;
+        }else if(stat.stat.name=="defense"){
+            pokedefense.textContent = stat.base_stat;
+    }else if(stat.stat.name=="special-attack"){
+        pokesp_atk.textContent = stat.base_stat;
+}else if(stat.stat.name=="special-defense"){
+    pokesp_def.textContent = stat.base_stat;
+}else if(stat.stat.name=="speed"){
+    pokeSpeed.textContent = stat.base_stat;
+}
+        
+        // statElementName.textContent = stat.stat.name;
+        // statElementAmount.textContent = stat.base_stat;
+        
     });
 }
 
 const renderNotFound = () => {
-    pokeName.textContent = 'No encontrado';
-    pokeImg.setAttribute('src', '/img/pokemonshadow.jpeg');
+    // pokeName.textContent = 'No encontrado';
+    pokeImg.setAttribute('src', '/img/shadow.jpeg');
     pokeImg.style.background =  '#fff';
-    pokeTypes.innerHTML = '';
-    pokeStats.innerHTML = '';
-    pokeId.textContent = '';
+    // pokeTypes.innerHTML = '';
+    // pokeStats.innerHTML = '';
+    // pokeId.textContent = '';
 }
